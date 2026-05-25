@@ -1,0 +1,33 @@
+{
+	"name": "popupmaker/extension-framework",
+	"description": "Shared PHP framework for Popup Maker standalone Pro-tier extensions.",
+	"version": "1.0.0",
+	"type": "library",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"wordpress",
+		"popup-maker",
+		"extensions"
+	],
+	"homepage": "https://github.com/PopupMaker/extension-framework",
+	"support": {
+		"issues": "https://github.com/PopupMaker/extension-framework/issues",
+		"source": "https://github.com/PopupMaker/extension-framework"
+	},
+	"authors": [
+		{
+			"name": "Code Atlantic LLC",
+			"homepage": "https://code-atlantic.com/"
+		}
+	],
+	"require": {
+		"php": ">=7.4"
+	},
+	"autoload": {
+		"psr-4": {
+			"PopupMaker\\ExtensionFramework\\": "src/"
+		}
+	},
+	"minimum-stability": "stable",
+	"prefer-stable": true
+}
