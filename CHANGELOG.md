@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2 - 2026-05-26
+
+- Add Pro upsell to the core notifications panel via `pum_alert_list` (`category: offer`).
+- Persist admin notice dismissal through core `_pum_dismissed_alerts` user meta.
+- Use separate dismissal codes for the admin notice and notifications panel.
+
 ## 1.0.1 - 2026-05-26
 
 - Extend `Plugin\Core` from `PopupMaker\Plugin\Extension` for core service delegation.
