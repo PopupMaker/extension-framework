@@ -15,6 +15,19 @@ Extensions require it via Composer only:
 
 Do not use `path` repositories in extension `composer.json`. Register the GitHub repo on Packagist if the package is not yet indexed.
 
+Until Packagist indexes the package, Composer can resolve releases from GitHub tags via a VCS repository:
+
+```json
+"repositories": [
+  {
+    "type": "vcs",
+    "url": "https://github.com/PopupMaker/extension-framework"
+  }
+]
+```
+
+Remove the VCS repository block once Packagist is active.
+
 Release workflow:
 
 1. Commit and push to `PopupMaker/extension-framework`
