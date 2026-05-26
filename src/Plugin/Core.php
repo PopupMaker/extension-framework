@@ -16,14 +16,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Base container for standalone Popup Maker extensions.
  */
-abstract class Core extends \PopupMaker\Plugin\Container {
-
-	/**
-	 * Core plugin reference.
-	 *
-	 * @var \PopupMaker\Plugin\Core
-	 */
-	public $core;
+abstract class Core extends \PopupMaker\Plugin\Extension {
 
 	/**
 	 * Constructor.
@@ -33,10 +26,7 @@ abstract class Core extends \PopupMaker\Plugin\Container {
 	public function __construct( $config ) {
 		parent::__construct( $config );
 
-		$this->core = \PopupMaker\plugin();
-
 		add_filter( 'pum_enabled_extensions', [ $this, 'register_extension' ] );
-		add_filter( 'pum_beta_enabled_extensions', [ $this, 'register_beta_support' ] );
 		add_action( 'init', [ $this, 'load_textdomain' ] );
 
 		$this->get( 'license' )->init();
@@ -115,23 +105,6 @@ abstract class Core extends \PopupMaker\Plugin\Container {
 		$extensions[ $this->get( 'slug' ) ] = true;
 
 		return $extensions;
-	}
-
-	/**
-	 * Register beta support.
-	 *
-	 * @param array<string, string> $products Products.
-	 * @return array<string, string>
-	 */
-	public function register_beta_support( $products ) {
-		$basename = $this->get( 'basename' );
-		$slug     = is_string( $basename ) ? dirname( $basename ) : '';
-
-		if ( '' !== $slug ) {
-			$products[ $slug ] = $this->get( 'fullname' );
-		}
-
-		return $products;
 	}
 
 	/**

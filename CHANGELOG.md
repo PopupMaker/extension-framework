@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1 - 2026-05-26
+
+- Extend `Plugin\Core` from `PopupMaker\Plugin\Extension` for core service delegation.
+- Remove duplicate beta registration; `PUM_Extension_License` owns `item_shortname` betas.
+
 ## 1.0.0 - 2026-05-25
 
 - Initial release.
