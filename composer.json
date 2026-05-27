@@ -1,7 +1,7 @@
 {
 	"name": "popupmaker/extension-framework",
 	"description": "Shared PHP framework for Popup Maker standalone Pro-tier extensions.",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"type": "library",
 	"license": "GPL-2.0-or-later",
 	"keywords": [

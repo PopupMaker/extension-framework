@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6 - 2026-05-27
+
+- Use "+" instead of "plus" in Pro panel upsell copy.
+
 ## 1.0.5 - 2026-05-27
 
 - Rank Pro bundled features by value and dynamically highlight the top 3–4 (excluding the active extension) in upsell copy.

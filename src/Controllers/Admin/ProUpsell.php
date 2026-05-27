@@ -357,7 +357,7 @@ class ProUpsell extends Controller {
 		return sprintf(
 			/* translators: 1: current extension feature name, 2: top bundled pro feature names */
 			__(
-				'%1$s plus %2$s and 10+ more pro features — bundled in <strong>Popup Maker Pro</strong> for less than buying extensions à la carte.',
+				'%1$s + %2$s and 10+ more pro features — bundled in <strong>Popup Maker Pro</strong> for less than buying extensions à la carte.',
 				$this->container->get( 'text_domain' )
 			),
 			esc_html( $upsell['feature_name'] ),
