@@ -333,11 +333,12 @@ class ProUpsell extends Controller {
 
 		if ( $this->is_feature_in_bundled_list( $upsell['feature_name'] ) ) {
 			return sprintf(
-				/* translators: %s: other bundled pro feature names */
+				/* translators: 1: current extension feature name, 2: other bundled pro feature names */
 				__(
-					'%s and 10+ more pro features — bundled in <strong>Popup Maker Pro</strong> for less than buying extensions à la carte.',
+					'%1$s plus %2$s and 10+ more pro features — bundled in <strong>Popup Maker Pro</strong> for less than buying extensions à la carte.',
 					$this->container->get( 'text_domain' )
 				),
+				esc_html( $upsell['feature_name'] ),
 				esc_html( $other_features )
 			);
 		}

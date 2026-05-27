@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4 - 2026-05-27
+
+- Pro panel upsell now mentions the current bundled extension once (e.g. "Scheduling plus Analytics…") instead of omitting it.
+
 ## 1.0.3 - 2026-05-27
 
 - Make Pro upsell copy context-aware: exclude the current extension from bundled feature lists so Scheduling no longer reads "Scheduling + Scheduling…".
