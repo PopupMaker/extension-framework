@@ -50,6 +50,76 @@ class ProUpsell extends Controller {
 	}
 
 	/**
+	 * Pro features highlighted in upsell copy.
+	 *
+	 * @return array<int, string>
+	 */
+	protected function get_bundled_feature_names() {
+		return [
+			'Scheduling',
+			'Analytics',
+			'Advanced Targeting',
+			'Theme Builder',
+		];
+	}
+
+	/**
+	 * Bundled features excluding the current extension when it matches one.
+	 *
+	 * @return array<int, string>
+	 */
+	protected function get_other_bundled_features() {
+		$feature_name = $this->get_upsell_config()['feature_name'];
+
+		return array_values(
+			array_filter(
+				$this->get_bundled_feature_names(),
+				function ( $name ) use ( $feature_name ) {
+					return 0 !== strcasecmp( $name, $feature_name );
+				}
+			)
+		);
+	}
+
+	/**
+	 * Whether the current extension is one of the highlighted bundled features.
+	 *
+	 * @param string $feature_name Feature label.
+	 * @return bool
+	 */
+	protected function is_feature_in_bundled_list( $feature_name ) {
+		foreach ( $this->get_bundled_feature_names() as $name ) {
+			if ( 0 === strcasecmp( $name, $feature_name ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Format a list of feature names for readable copy.
+	 *
+	 * @param array<int, string> $features Feature names.
+	 * @return string
+	 */
+	protected function format_feature_list( $features ) {
+		$features = array_values( $features );
+
+		if ( empty( $features ) ) {
+			return '';
+		}
+
+		if ( 1 === count( $features ) ) {
+			return $features[0];
+		}
+
+		$last = array_pop( $features );
+
+		return implode( ', ', $features ) . ', and ' . $last;
+	}
+
+	/**
 	 * Upsell config with defaults.
 	 *
 	 * @return array<string, string>
@@ -155,8 +225,9 @@ class ProUpsell extends Controller {
 			return;
 		}
 
-		$upsell = $this->get_upsell_config();
-		$url    = $this->get_upgrade_url( 'admin-notice' );
+		$upsell       = $this->get_upsell_config();
+		$url          = $this->get_upgrade_url( 'admin-notice' );
+		$other_features = $this->format_feature_list( $this->get_other_bundled_features() );
 
 		printf(
 			'<div class="notice notice-info is-dismissible" data-pum-upsell="%1$s" data-alert-code="%2$s"><p>%3$s</p></div>',
@@ -164,11 +235,12 @@ class ProUpsell extends Controller {
 			esc_attr( $this->get_admin_notice_code() ),
 			wp_kses_post(
 				sprintf(
-					/* translators: %1$s: feature name, %2$s: opening anchor, %3$s: closing anchor */
-					__( '%1$s is included in %2$sPopup Maker Pro%3$s along with Scheduling, Analytics, Advanced Targeting, and more.', $this->container->get( 'text_domain' ) ),
+					/* translators: %1$s: feature name, %2$s: opening anchor, %3$s: closing anchor, %4$s: other bundled pro features */
+					__( '%1$s is included in %2$sPopup Maker Pro%3$s along with %4$s, and more.', $this->container->get( 'text_domain' ) ),
 					esc_html( $upsell['feature_name'] ),
 					'<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">',
-					'</a>'
+					'</a>',
+					esc_html( $other_features )
 				)
 			)
 		);
@@ -257,13 +329,27 @@ class ProUpsell extends Controller {
 	 * @return string
 	 */
 	protected function get_panel_message( $upsell ) {
+		$other_features = $this->format_feature_list( $this->get_other_bundled_features() );
+
+		if ( $this->is_feature_in_bundled_list( $upsell['feature_name'] ) ) {
+			return sprintf(
+				/* translators: %s: other bundled pro feature names */
+				__(
+					'%s and 10+ more pro features — bundled in <strong>Popup Maker Pro</strong> for less than buying extensions à la carte.',
+					$this->container->get( 'text_domain' )
+				),
+				esc_html( $other_features )
+			);
+		}
+
 		return sprintf(
-			/* translators: %s: extension feature name */
+			/* translators: 1: extension feature name, 2: other bundled pro feature names */
 			__(
-				'%s + Scheduling, Analytics, Advanced Targeting, Theme Builder, and 10+ more pro features — bundled in <strong>Popup Maker Pro</strong> for less than buying extensions à la carte.',
+				'%1$s + %2$s and 10+ more pro features — bundled in <strong>Popup Maker Pro</strong> for less than buying extensions à la carte.',
 				$this->container->get( 'text_domain' )
 			),
-			esc_html( $upsell['feature_name'] )
+			esc_html( $upsell['feature_name'] ),
+			esc_html( $other_features )
 		);
 	}
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3 - 2026-05-27
+
+- Make Pro upsell copy context-aware: exclude the current extension from bundled feature lists so Scheduling no longer reads "Scheduling + Scheduling…".
+
 ## 1.0.2 - 2026-05-26
 
 - Add Pro upsell to the core notifications panel via `pum_alert_list` (`category: offer`).
