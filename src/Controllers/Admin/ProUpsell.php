@@ -50,51 +50,74 @@ class ProUpsell extends Controller {
 	}
 
 	/**
-	 * Pro features highlighted in upsell copy.
+	 * Pro features bundled in Popup Maker Pro, highest value first.
 	 *
-	 * @return array<int, string>
+	 * Keys match retired extension slugs where applicable.
+	 *
+	 * @return array<string, string> Slug => customer-facing label.
 	 */
-	protected function get_bundled_feature_names() {
+	protected function get_pro_features_by_priority() {
 		return [
-			'Scheduling',
-			'Analytics',
-			'Advanced Targeting',
-			'Theme Builder',
+			'analytics'                       => 'Analytics',
+			'exit-intent-popups'              => 'Exit Intent',
+			'advanced-targeting-conditions'     => 'Advanced Targeting',
+			'scheduling'                      => 'Scheduling',
+			'scroll-triggered-popups'         => 'Scroll Triggers',
+			'advanced-theme-builder'          => 'Theme Builder',
+			'split-testing'                   => 'Split Testing',
+			'forced-interaction'              => 'Forced Interaction',
+			'call-to-actions'                 => 'Call to Actions',
 		];
 	}
 
 	/**
-	 * Bundled features excluding the current extension when it matches one.
+	 * Resolve the catalog slug for the active extension, if any.
 	 *
-	 * @return array<int, string>
+	 * @return string|null
 	 */
-	protected function get_other_bundled_features() {
+	protected function get_current_pro_feature_slug() {
+		$slug = sanitize_key( $this->container->get( 'slug' ) );
+		$catalog = $this->get_pro_features_by_priority();
+
+		if ( isset( $catalog[ $slug ] ) ) {
+			return $slug;
+		}
+
 		$feature_name = $this->get_upsell_config()['feature_name'];
 
-		return array_values(
-			array_filter(
-				$this->get_bundled_feature_names(),
-				function ( $name ) use ( $feature_name ) {
-					return 0 !== strcasecmp( $name, $feature_name );
-				}
-			)
-		);
-	}
-
-	/**
-	 * Whether the current extension is one of the highlighted bundled features.
-	 *
-	 * @param string $feature_name Feature label.
-	 * @return bool
-	 */
-	protected function is_feature_in_bundled_list( $feature_name ) {
-		foreach ( $this->get_bundled_feature_names() as $name ) {
-			if ( 0 === strcasecmp( $name, $feature_name ) ) {
-				return true;
+		foreach ( $catalog as $catalog_slug => $label ) {
+			if ( 0 === strcasecmp( $label, $feature_name ) ) {
+				return $catalog_slug;
 			}
 		}
 
-		return false;
+		return null;
+	}
+
+	/**
+	 * Top Pro features to highlight, excluding what this extension already provides.
+	 *
+	 * @param int $limit Number of features to return.
+	 * @return array<int, string>
+	 */
+	protected function get_highlighted_pro_features( $limit = 4 ) {
+		$catalog = $this->get_pro_features_by_priority();
+		$current = $this->get_current_pro_feature_slug();
+		$features = [];
+
+		foreach ( $catalog as $slug => $label ) {
+			if ( $slug === $current ) {
+				continue;
+			}
+
+			$features[] = $label;
+
+			if ( count( $features ) >= $limit ) {
+				break;
+			}
+		}
+
+		return $features;
 	}
 
 	/**
@@ -225,9 +248,9 @@ class ProUpsell extends Controller {
 			return;
 		}
 
-		$upsell       = $this->get_upsell_config();
-		$url          = $this->get_upgrade_url( 'admin-notice' );
-		$other_features = $this->format_feature_list( $this->get_other_bundled_features() );
+		$upsell            = $this->get_upsell_config();
+		$url               = $this->get_upgrade_url( 'admin-notice' );
+		$highlight_features = $this->format_feature_list( $this->get_highlighted_pro_features( 3 ) );
 
 		printf(
 			'<div class="notice notice-info is-dismissible" data-pum-upsell="%1$s" data-alert-code="%2$s"><p>%3$s</p></div>',
@@ -240,7 +263,7 @@ class ProUpsell extends Controller {
 					esc_html( $upsell['feature_name'] ),
 					'<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">',
 					'</a>',
-					esc_html( $other_features )
+					esc_html( $highlight_features )
 				)
 			)
 		);
@@ -329,28 +352,16 @@ class ProUpsell extends Controller {
 	 * @return string
 	 */
 	protected function get_panel_message( $upsell ) {
-		$other_features = $this->format_feature_list( $this->get_other_bundled_features() );
-
-		if ( $this->is_feature_in_bundled_list( $upsell['feature_name'] ) ) {
-			return sprintf(
-				/* translators: 1: current extension feature name, 2: other bundled pro feature names */
-				__(
-					'%1$s plus %2$s and 10+ more pro features — bundled in <strong>Popup Maker Pro</strong> for less than buying extensions à la carte.',
-					$this->container->get( 'text_domain' )
-				),
-				esc_html( $upsell['feature_name'] ),
-				esc_html( $other_features )
-			);
-		}
+		$highlight_features = $this->format_feature_list( $this->get_highlighted_pro_features( 4 ) );
 
 		return sprintf(
-			/* translators: 1: extension feature name, 2: other bundled pro feature names */
+			/* translators: 1: current extension feature name, 2: top bundled pro feature names */
 			__(
-				'%1$s + %2$s and 10+ more pro features — bundled in <strong>Popup Maker Pro</strong> for less than buying extensions à la carte.',
+				'%1$s plus %2$s and 10+ more pro features — bundled in <strong>Popup Maker Pro</strong> for less than buying extensions à la carte.',
 				$this->container->get( 'text_domain' )
 			),
 			esc_html( $upsell['feature_name'] ),
-			esc_html( $other_features )
+			esc_html( $highlight_features )
 		);
 	}
 

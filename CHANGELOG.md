@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5 - 2026-05-27
+
+- Rank Pro bundled features by value and dynamically highlight the top 3–4 (excluding the active extension) in upsell copy.
+
 ## 1.0.4 - 2026-05-27
 
 - Pro panel upsell now mentions the current bundled extension once (e.g. "Scheduling plus Analytics…") instead of omitting it.
